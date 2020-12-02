@@ -1,0 +1,47 @@
+// Link: https://leetcode.com/explore/challenge/card/october-leetcoding-challenge/559/week-1-october-1st-october-7th/3486/discuss/883184/Rotate-List-or-JAVA-Solution
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        int len=0;
+        
+        // Find length
+        ListNode temp=head;
+        while(temp!=null){
+            temp=temp.next;
+            len+=1;
+        }
+        if(len<2){
+            return head;
+        }
+        
+        // Number of rotations
+        int rots=k%len;
+        if(rots==0){
+            return head;
+        }
+        
+        // Get the new head. The node previous to it should now point to null
+        ListNode t1=head;
+        for(int i=0;i<(len-rots-1);i++){
+            t1=t1.next;
+        }
+        ListNode t2=t1.next;
+        t1.next=null;
+        ListNode head_n=t2; // New head
+        while(t2.next!=null){ // Get to the tail of linked list
+            t2=t2.next;
+        }
+        t2.next=head; // The last node of LL should point to first node. 
+        return head_n;
+    }
+}
