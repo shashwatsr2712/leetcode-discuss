@@ -1,0 +1,59 @@
+// Link: https://leetcode.com/explore/challenge/card/november-leetcoding-challenge/566/week-3-november-15th-november-21st/3533/discuss/937887/Longest-Mountain-in-Array-or-JAVA
+
+class Solution {
+    public int longestMountain(int[] A) {
+        int len=A.length;
+        
+        // Base case
+        if(len<3){
+            return 0;
+        }
+        
+        // 'st': Start index of mountain; 'i': Index to track position while traversing mountains
+        int st=0,i=st;
+        
+        int res=0;  // Result
+        
+        // Move start pointer to proper location
+        while(st<len-3 && A[st]>=A[st+1]){
+            st+=1;
+        }
+        
+        // Even after moving 'st' to proper location, no mountain is feasible
+        if(A[st]>=A[st+1]){
+            return 0;
+        }
+        
+        // In each iteration, a mountain is obtained and max(res) is updated
+        while(st<len-2){
+            i=st;
+            while(i<len-2 && A[i]<A[i+1]){  // Move 'i' to peak
+                i+=1;
+            }
+            if(i==st){  // No gap between peak and start
+                st=i+1;
+                continue;
+            }
+            if(A[i]<A[i+1]){    // Necessarily, i==len-2 (why?); No descent after peak => No scope to get a mountain
+                break;
+            }
+            if(A[i]==A[i+1]){   // Peak is not actually a peak, but a plateau
+                if(i==len-2){   // No scope to get a mountain anymore
+                    break;
+                }
+                st=i+1;
+                continue;
+            }
+            
+            // Move 'i' to the end of the descent after peak
+            i+=1;
+            while(i<len && A[i]<A[i-1]){
+                i+=1;
+            }
+            res=Math.max(res,i-st); // Update max
+            // System.out.println("At "+st+" "+i);
+            st=i-1; // For next iteration
+        }
+        return res;
+    }
+}
