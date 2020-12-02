@@ -1,0 +1,58 @@
+// Link: https://leetcode.com/discuss/explore/august-leetcoding-challenge/807606/Stream-of-Characters-or-JAVA-solution-using-Reverse-Trie
+
+class TrieNode{
+    Map<Character,TrieNode> mp;
+    boolean end_of_word;
+    TrieNode(){
+        mp=new HashMap<Character,TrieNode>();
+        end_of_word=false;
+    }
+    
+    public void insertWordRev(String w){
+        int len=w.length();
+        TrieNode t=this;
+        for(int i=len-1;i>=0;i--){
+            char c=w.charAt(i);
+            if(!t.mp.containsKey(c)){
+                t.mp.put(c,new TrieNode());
+            }
+            t=t.mp.get(c);
+        }
+        t.end_of_word=true;
+    }
+}
+
+class StreamChecker {
+    TrieNode root;
+    String str;
+    
+    public StreamChecker(String[] words) {
+        root=new TrieNode();
+        for(String w:words){
+            root.insertWordRev(w);
+        }
+    }
+    
+    public boolean query(char letter) {
+        str+=letter;
+        int len=str.length();
+        TrieNode temp=root;
+        for(int i=len-1;i>=0;i--){
+            char c=str.charAt(i);
+            if(temp.end_of_word){
+                return true;
+            }
+            if(!temp.mp.containsKey(c)){
+                return false;
+            }
+            temp=temp.mp.get(c);
+        }
+        return temp.end_of_word;
+    }
+}
+
+/**
+ * Your StreamChecker object will be instantiated and called as such:
+ * StreamChecker obj = new StreamChecker(words);
+ * boolean param_1 = obj.query(letter);
+ */
