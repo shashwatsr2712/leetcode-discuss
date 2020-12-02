@@ -1,0 +1,49 @@
+// Link: https://leetcode.com/explore/challenge/card/november-leetcoding-challenge/567/week-4-november-22nd-november-28th/3544/discuss/949599/Longest-Substring-with-At-Least-K-Repeating-Characters-or-JAVA-or-Recursion
+
+class Solution {
+    public int longestSubstring(String s, int k) {
+        // Frequency of characters in a string
+        int freq[]=new int[26];
+        Arrays.fill(freq,0);
+        for(int i=0;i<s.length();i++){
+            freq[s.charAt(i)-97]+=1;
+        }
+        
+        // characters with frequency<k
+        Set<Character> infrequent_chars=new HashSet<Character>();
+        for(int i=0;i<26;i++){
+            if(freq[i]<k){
+                infrequent_chars.add((char)(i+97));
+            }
+        }
+        
+        // replace infrequent characters with '$'
+        char str[]=s.toCharArray();
+        for(int i=0;i<str.length;i++){
+            if(infrequent_chars.contains(str[i])){
+                str[i]='$';
+            }
+        }
+        
+        // split string by '$'s
+        String arr[]=(new String(str)).split("[$]+");
+        
+        int max=0;
+        outer:for(String t:arr){
+            Arrays.fill(freq,0);
+            for(int i=0;i<t.length();i++){
+                freq[t.charAt(i)-97]+=1;
+            }
+            for(int i=0;i<26;i++){
+                if(freq[i]>0 && freq[i]<k){
+                    // Recur if this string has at least one infrequent character
+                    max=Math.max(max,longestSubstring(t,k));
+                    continue outer;
+                }
+            }
+            // This is a valid string (all chars>=k times) and hence max can be updated
+            max=Math.max(max,t.length());
+        }
+        return max;
+    }
+}
