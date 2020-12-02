@@ -1,0 +1,48 @@
+// Link: https://leetcode.com/explore/challenge/card/august-leetcoding-challenge/552/week-4-august-22nd-august-28th/3436/discuss/810968/Minimum-Cost-For-Tickets-or-JAVA-DP-solution-or-Recursion-with-memoization
+
+class Solution {
+    int memo[][];    
+    
+    public int getNextStarting(int target,int arr[],int st){
+        int lo=st, hi=arr.length-1;
+        while(lo<=hi){
+            int mid=(lo+hi)/2;
+            if(arr[mid]<=target){
+                lo=mid+1;
+            } else{
+                 hi=mid-1;
+            }
+        }
+        if(lo>=arr.length){
+            return arr.length;
+        }
+        return lo;
+    }
+    
+    public int mincostUtil(int st,int end,int days[],int costs[]){
+        if(st>end){
+            return 0;
+        }
+        if(memo[st][end]!=-1){
+            return memo[st][end];
+        }
+        int cost1=0,cost2=0,cost3=0;
+        int new_st=getNextStarting(days[st],days,st);
+        cost1+=costs[0]+mincostUtil(new_st,end,days,costs);
+        new_st=getNextStarting(days[st]+6,days,st);
+        cost2+=costs[1]+mincostUtil(new_st,end,days,costs);
+        new_st=getNextStarting(days[st]+29,days,st);
+        cost3+=costs[2]+mincostUtil(new_st,end,days,costs);
+        memo[st][end]=Math.min(cost1,Math.min(cost2,cost3));
+        return memo[st][end];
+    }
+    
+    public int mincostTickets(int[] days, int[] costs) {
+        memo=new int[days.length][];
+        for(int i=0;i<days.length;i++){
+            memo[i]=new int[days.length];
+            Arrays.fill(memo[i],-1);
+        }
+        return mincostUtil(0,days.length-1,days,costs);
+    }
+}
