@@ -1,0 +1,39 @@
+// Link: https://leetcode.com/explore/challenge/card/november-leetcoding-challenge/567/week-4-november-22nd-november-28th/3541/discuss/946434/House-Robber-III-or-Recursion-or-JAVA
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+class Solution {
+    public int robUtil(TreeNode root,boolean is_parent_considered){
+        if(root==null){
+            return 0;
+        }
+        if(is_parent_considered){   // Since parent of "root" has been considered, we cannot take the value at root
+            return robUtil(root.left,false)+robUtil(root.right,false); 
+        } else{ // Here we consider both the scenarios where root.val is taken as well as ignored
+            int opt1=robUtil(root.left,false)+robUtil(root.right,false);
+            int opt2=root.val+robUtil(root.left,true)+robUtil(root.right,true);
+            return Math.max(opt1,opt2);
+        }
+    }
+    
+    public int rob(TreeNode root) {
+        if(root==null){
+            return 0;
+        }
+        return robUtil(root,false);
+    }
+}
