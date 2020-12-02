@@ -1,0 +1,30 @@
+// Link: https://leetcode.com/explore/challenge/card/november-leetcoding-challenge/568/week-5-november-29th-november-30th/3548/discuss/953154/Jump-Game-III-or-Breadth-First-Traversal-or-JAVA
+
+class Solution {
+    public boolean canReach(int[] arr, int start) {
+        Queue<Integer> covered_indices=new LinkedList<Integer>();
+        covered_indices.add(start);
+        
+        boolean visited[]=new boolean[arr.length];
+        Arrays.fill(visited,false);
+        
+        visited[start]=true;
+        while(covered_indices.size()>0){
+            int removed=covered_indices.remove();
+            if(arr[removed]==0){
+                return true;
+            }
+            int left_ind=removed-arr[removed];
+            int right_ind=removed+arr[removed];
+            if(left_ind>=0 && !visited[left_ind]){
+                covered_indices.add(left_ind);
+                visited[left_ind]=true;
+            }
+            if(right_ind<arr.length && !visited[right_ind]){
+                covered_indices.add(right_ind);
+                visited[right_ind]=true;
+            }
+        }
+        return false;
+    }
+}
