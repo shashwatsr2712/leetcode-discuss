@@ -1,0 +1,75 @@
+// Link: https://leetcode.com/explore/challenge/card/november-leetcoding-challenge/568/week-5-november-29th-november-30th/3549/discuss/955496/The-Skyline-Problem-or-Priority-Queue-or-JAVA
+
+class Comp implements Comparator<List<Integer>>{
+    public int compare(List<Integer> a,List<Integer> b){
+        // For same positions, if both are end points, lower height comes first
+        //                      if both are start points, higher height comes first
+        //                      else start point comes first
+        if(a.get(0)==b.get(0)){
+            if(a.get(2)==1 && b.get(2)==1){
+                return a.get(1)-b.get(1);
+            }
+            if(a.get(2)==0 && b.get(2)==0){
+                return b.get(1)-a.get(1);
+            }
+            return a.get(2)==0 ? -1 : 1;
+        }
+        // Else, simply sort by positions in ascending order
+        return a.get(0)-b.get(0);
+    }
+}
+
+class Solution {
+    public List<List<Integer>> getSkyline(int[][] buildings) {
+        List<List<Integer>> res=new ArrayList<List<Integer>>(); // Result list
+        if(buildings.length==0){
+            return res;
+        }
+        
+        // Create a list of points (not rectangles) => Each points has a position, a height, and info for start/end
+        List<List<Integer>> point_lst=new ArrayList<List<Integer>>();
+        for(int i=0;i<buildings.length;i++){
+            List<Integer> temp=new ArrayList<Integer>();
+            temp.add(buildings[i][0]);temp.add(buildings[i][2]);temp.add(0);    // last value is 0 for start; 1 for end
+            point_lst.add(temp);
+            temp=new ArrayList<Integer>();
+            temp.add(buildings[i][1]);temp.add(buildings[i][2]);temp.add(1);    // last value is 0 for start; 1 for end
+            point_lst.add(temp);
+        }
+        
+        // Sort the list of points using comparator 
+        Collections.sort(point_lst,new Comp());
+        // System.out.println(point_lst);
+        
+        // Priority Queue for heights
+        PriorityQueue<Integer> heights=new PriorityQueue<Integer>(Collections.reverseOrder());
+        heights.add(0);
+        for(int i=0;i<point_lst.size();i++){
+            int max=heights.peek();
+            // For start point, add its height to PQ
+            if(point_lst.get(i).get(2)==0){
+                heights.add(point_lst.get(i).get(1));
+            } else{ // For end point, remove its height from the PQ
+                heights.remove(point_lst.get(i).get(1));
+            }
+            int new_max=heights.peek();
+            // If new max height in PQ changes after adding/removing above, add a new entry to result
+            if(new_max!=max){
+                int len=res.size();
+                if(len>0 && res.get(len-1).get(0).equals(point_lst.get(i).get(0))){
+                    // Edge case for when position of the new value is same as that of the last one in the result
+                    // Choose the one with smaller height
+                    List<Integer> temp=res.get(len-1);
+                    temp.set(1,Math.min(new_max,temp.get(1)));
+                    res.set(len-1,temp);
+                } else{
+                    List<Integer> temp=new ArrayList<Integer>();
+                    temp.add(point_lst.get(i).get(0));
+                    temp.add(new_max);
+                    res.add(temp);
+                }
+            }  
+        }
+        return res;
+    }
+}
