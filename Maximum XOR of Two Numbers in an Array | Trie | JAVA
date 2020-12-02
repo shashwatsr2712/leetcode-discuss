@@ -1,0 +1,46 @@
+// Link: https://leetcode.com/explore/challenge/card/september-leetcoding-challenge/556/week-3-september-15th-september-21st/3462/discuss/849374/Maximum-XOR-of-Two-Numbers-in-an-Array-or-Trie-or-JAVA
+
+class TrieNode{
+    TrieNode map[];
+    TrieNode(){
+        map=new TrieNode[2];
+    }
+    
+    public void addNum(int x){
+        TrieNode t=this;
+        for(int i=31;i>=0;i--){
+            int val=(x>>i)&1;
+            if(t.map[val]==null){
+                t.map[val]=new TrieNode();
+            }
+            t=t.map[val];
+        }
+    }
+    
+    public int getMaxXor(int x){
+        TrieNode t=this;
+        int xor=0;
+        for(int i=31;i>=0;i--){
+            int val=(x>>i)&1;
+            if(t.map[val^1]!=null){
+                val=val^1;
+                xor+=Math.pow(2,i);
+            }
+            t=t.map[val];
+        }
+        return xor;
+    }
+}
+
+class Solution {
+    public int findMaximumXOR(int[] nums) {
+        TrieNode root=new TrieNode();
+        int max=Integer.MIN_VALUE;
+        for(int i=0;i<nums.length;i++){
+            root.addNum(nums[i]);
+            int here=root.getMaxXor(nums[i]);
+            max=Math.max(here,max);
+        }
+        return max;
+    }
+}
