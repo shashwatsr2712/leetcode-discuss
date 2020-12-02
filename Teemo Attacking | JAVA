@@ -1,0 +1,18 @@
+// Link: https://leetcode.com/explore/challenge/card/september-leetcoding-challenge/557/week-4-september-22nd-september-28th/3473/discuss/864903/Teemo-Attacking-or-JAVA
+
+class Solution {
+    public int findPoisonedDuration(int[] timeSeries, int duration) {
+        int count=0;
+        int prev_end=0;
+        
+        for(int i=0;i<timeSeries.length;i++){
+            int overlapped=0;
+            if(timeSeries[i]<prev_end){
+                overlapped=prev_end-timeSeries[i];
+            }
+            count+=duration-overlapped;
+            prev_end=timeSeries[i]+duration;
+        }
+        return count;
+    }
+}
