@@ -1,0 +1,35 @@
+// Link: https://leetcode.com/explore/challenge/card/october-leetcoding-challenge/560/week-2-october-8th-october-14th/3494/discuss/894065/House-Robber-II-or-Java-or-DP-with-memoization
+
+class Solution {
+    int memo[];
+    public int robUtil(int nums[],int st,int end){
+        if(st>end){
+            return 0;
+        }
+        if(memo[st]!=-1){
+            return memo[st];
+        }
+        int opt1=nums[st]+robUtil(nums,st+2,end);
+        int opt2=robUtil(nums,st+1,end);
+        memo[st]=Math.max(opt1,opt2);
+        // System.out.println(st+". "+opt1+" "+opt2);
+        return memo[st];
+    }
+    
+    public int rob(int[] nums) {
+        int len=nums.length;
+        memo=new int[len];
+        Arrays.fill(memo,-1);
+        
+        // Consider first
+        int cost1=nums[0]+robUtil(nums,2,len-2);
+        // System.out.println("A "+cost1);
+        
+        // Don't consider first
+        Arrays.fill(memo,-1);
+        int cost2=robUtil(nums,1,len-1);
+        // System.out.println("B "+cost2);
+        
+        return Math.max(cost1,cost2);
+    }
+}
