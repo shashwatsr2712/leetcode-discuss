@@ -1,0 +1,77 @@
+// Link: https://leetcode.com/explore/challenge/card/november-leetcoding-challenge/565/week-2-november-8th-november-14th/3529/discuss/934068/Populating-Next-Right-Pointers-or-Level-order-traversal-or-JAVA
+
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+    
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+class TraversalInfo{
+    Node node;
+    int level;
+    TraversalInfo(Node n,int l){
+        node=n;
+        level=l;
+    }
+}
+
+class Solution {
+    public void makeNextConnections(List<Node> nodes_at_a_level){
+        int len=nodes_at_a_level.size();
+        if(len==0){
+            return;
+        }
+        nodes_at_a_level.get(len-1).next=null;
+        for(int i=0;i<len-1;i++){
+            nodes_at_a_level.get(i).next=nodes_at_a_level.get(i+1);    
+        }
+    }
+    
+    public Node connect(Node root) {
+        if(root==null){
+            return root;
+        }
+        
+        Queue<TraversalInfo> traversal_queue=new LinkedList<TraversalInfo>();
+        traversal_queue.add(new TraversalInfo(root,0));
+        
+        int curr_level=-1;
+        List<Node> nodes_at_a_level=new ArrayList<Node>(); // Nodes at a particular level
+        
+        while(traversal_queue.size()>0){
+            TraversalInfo removed_node=traversal_queue.remove();
+            if(removed_node.level!=curr_level){
+                if(curr_level!=-1){
+                    makeNextConnections(nodes_at_a_level);
+                    nodes_at_a_level.clear();
+                }
+                curr_level=removed_node.level;
+            }
+            nodes_at_a_level.add(removed_node.node);
+            if(removed_node.node.left!=null){
+                traversal_queue.add(new TraversalInfo(removed_node.node.left,curr_level+1));
+            }
+            if(removed_node.node.right!=null){
+                traversal_queue.add(new TraversalInfo(removed_node.node.right,curr_level+1));
+            }
+        }
+        makeNextConnections(nodes_at_a_level);
+        return root;
+    }
+}
