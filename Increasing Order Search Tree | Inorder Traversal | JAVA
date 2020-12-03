@@ -1,0 +1,47 @@
+// Link: https://leetcode.com/explore/challenge/card/december-leetcoding-challenge/569/week-1-december-1st-december-7th/3553/discuss/958110/Increasing-Order-Search-Tree-or-Inorder-Traversal-or-JAVA
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    TreeNode n_root=null; // Root of the new tree constructed
+    TreeNode curr=null; // Tracks the most recently created node
+                        // to the right of which new node is attached
+    
+    // Traverse the tree in-order
+    public void constructIncreasingBST(TreeNode root){
+        if(root==null){
+            return;
+        }
+        
+        constructIncreasingBST(root.left);
+        
+        if(n_root==null){
+            n_root=new TreeNode(root.val);
+            curr=n_root;
+        } else{
+            curr.right=new TreeNode(root.val);
+            curr=curr.right;
+        }
+        curr.left=null;
+        
+        constructIncreasingBST(root.right);
+    }
+    
+    public TreeNode increasingBST(TreeNode root) {
+        constructIncreasingBST(root);
+        return n_root;
+    }
+}
