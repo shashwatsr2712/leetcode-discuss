@@ -1,0 +1,46 @@
+// Link: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/discuss/958318/Lowest-Common-Ancestor-of-a-Binary-Search-Tree-or-Recursion-or-JAVA
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+class Solution {
+    // Utility to check if the sought node is present in the tree beginning at "root"
+    public boolean isPresent(TreeNode sought_node,TreeNode root){
+        if(root==null){
+            return false;
+        }
+        if(root==sought_node){
+            return true;
+        }
+        if(root.val<sought_node.val){
+            return isPresent(sought_node,root.right);
+        }
+        return isPresent(sought_node,root.left);
+    }
+    
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==p || root==q){
+            return root;
+        }
+        
+        boolean is_p_on_left=isPresent(p,root.left);
+        boolean is_q_on_left=isPresent(q,root.left);
+        
+        // If p and q are on opposite sides of "root", "root" itself is the LCA
+        if((is_p_on_left && !is_q_on_left) || (!is_p_on_left && is_q_on_left)){
+            return root;
+        }
+        if(is_p_on_left && is_q_on_left){   // If both are on left side, recurse on left subtree
+            return lowestCommonAncestor(root.left,p,q);
+        }
+        // If both are on right side, recurse on right subtree
+        return lowestCommonAncestor(root.right,p,q);
+    }
+}
