@@ -1,0 +1,44 @@
+// Link: https://leetcode.com/explore/challenge/card/december-leetcoding-challenge/569/week-1-december-1st-december-7th/3555/discuss/960478/Can-Place-Flowers-or-JAVA
+
+class Solution {
+    public boolean canPlaceFlowers(int[] flowerbed, int n) {
+        int len=flowerbed.length;
+        int max_limit=0;    // maximum number of flowers that can be planted
+        
+        // Calling a sequence of consecutive '0's as a 'series'
+        
+        // count maximum number of flowers that can be planted
+        // in the first series (before the first '1')
+        int i=0, count=0;
+        while(i<len && flowerbed[i]==0){
+            count+=1;
+            i+=1;
+        }
+        if(count==len){
+            max_limit+=(int)Math.ceil((double)count/2.0);
+        } else{
+            max_limit+=count/2;
+        }
+        
+        // count maximum number of flowers that can be planted
+        // in all the series after the first one
+        while(i<len){
+            if(flowerbed[i]==1){    // keep skipping until a series begins ('0' found)
+                i+=1;
+                continue;
+            }
+            count=0;
+            while(i<len && flowerbed[i]==0){    // find the length of this series
+                count+=1;
+                i+=1;
+            }
+            if(i==len){ // if this is the last series, we can plant in the last index as well
+                max_limit+=(int)Math.ceil((double)(count-1)/2.0);
+            } else{ // else, if it is not the last series, we cannot plant in the boundary indices
+                max_limit+=(int)Math.ceil((double)(count-2)/2.0);
+            }
+        }
+        
+        return n<=max_limit;
+    }
+}
