@@ -11,27 +11,14 @@
  */
 
 class Solution {
-    // Utility to check if the sought node is present in the tree beginning at "root"
-    public boolean isPresent(TreeNode sought_node,TreeNode root){
-        if(root==null){
-            return false;
-        }
-        if(root==sought_node){
-            return true;
-        }
-        if(root.val<sought_node.val){
-            return isPresent(sought_node,root.right);
-        }
-        return isPresent(sought_node,root.left);
-    }
-    
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        // Base case
         if(root==p || root==q){
             return root;
         }
         
-        boolean is_p_on_left=isPresent(p,root.left);
-        boolean is_q_on_left=isPresent(q,root.left);
+        boolean is_p_on_left=p.val<root.val;
+        boolean is_q_on_left=q.val<root.val;
         
         // If p and q are on opposite sides of "root", "root" itself is the LCA
         if((is_p_on_left && !is_q_on_left) || (!is_p_on_left && is_q_on_left)){
@@ -43,4 +30,3 @@ class Solution {
         // If both are on right side, recurse on right subtree
         return lowestCommonAncestor(root.right,p,q);
     }
-}
