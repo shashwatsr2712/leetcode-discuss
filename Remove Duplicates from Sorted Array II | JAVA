@@ -1,0 +1,32 @@
+// Link: https://leetcode.com/explore/challenge/card/december-leetcoding-challenge/570/week-2-december-8th-december-14th/3562/discuss/968212/Remove-Duplicates-from-Sorted-Array-II-or-JAVA
+
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        int len=nums.length;
+        if(len<3){
+            return len;
+        }
+        
+        // 'pos' keeps track of the location at which some value has to be placed
+        // 'i' is the current index; 'count' counts the number of occurences of the last seen value
+        int pos=0, i=0;
+        int count=0;
+        int prev=nums[0];
+        
+        while(i<len){
+            if(nums[i]==prev){  // same value found again => increment 'count'
+                count+=1;
+            } else{ // new value found => reset 'count'
+                prev=nums[i];
+                count=1;
+            }
+            
+            if(count<3){    // valid for this problem (we can have <3 occurences of a value)
+                nums[pos]=nums[i];
+                pos+=1;
+            }
+            i+=1;
+        }
+        return pos;
+    }
+}
