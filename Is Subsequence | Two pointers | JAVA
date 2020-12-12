@@ -1,0 +1,36 @@
+// Link: https://leetcode.com/problems/is-subsequence/discuss/969366/Is-Subsequence-or-Two-pointers-or-JAVA
+
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        int len1=s.length(), len2=t.length();
+        int i1=0, i2=0;
+        
+        // Special cases
+        if(len1==0){
+            return true;    
+        }
+        if(len2<len1){
+            return false;
+        }
+        
+        // Maintain 2 pointers (one for each string)
+        // Pick a char from 's'
+        // Look for its first occurence using the pointer of 't'
+        //  If not found, return false
+        //  Else go for the next char of 's'
+        // Both pointers are only moved forward from last position
+        outer:while(i1<len1){
+            char c1=s.charAt(i1);
+            while(i2<len2){
+                char c2=t.charAt(i2);
+                i2+=1;
+                if(c2==c1){
+                    i1+=1;
+                    continue outer;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+}
