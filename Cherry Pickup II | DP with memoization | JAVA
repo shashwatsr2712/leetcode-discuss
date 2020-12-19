@@ -1,0 +1,55 @@
+// Link: https://leetcode.com/explore/challenge/card/december-leetcoding-challenge/571/week-3-december-15th-december-21st/3571/discuss/977860/Cherry-Pickup-II-or-DP-with-memoization-or-JAVA
+
+class Solution {
+    // Solution using memoized recursion (DP)
+    // memo[r][c1][c2] => maximum number of cherries collected starting at position (r,c1) for #1 and (r,c2) for #2
+    int memo[][][];
+    
+    public int cherryPickupUtil(int grid[][],int rows,int cols,int r,int c1,int c2){
+        if(memo[r][c1][c2]!=-1){    // Use precomputed solution
+            return memo[r][c1][c2];
+        }
+        if(r==rows-1){  // Base case; in the last row
+            memo[r][c1][c2]=grid[r][c1]+grid[r][c2];
+            if(c1==c2){
+                memo[r][c1][c2]/=2;
+            }
+        } else{ // Recursion for the next row (considering all scenarios for column index)
+            int cherries_here=grid[r][c1]+grid[r][c2];
+            if(c1==c2){
+                cherries_here/=2;
+            }
+            int max=0;
+            for(int add1=-1;add1<=1;add1++){
+                if(c1+add1<0 || c1+add1>=cols){ // continue if Robot leaves the grid 
+                    continue;
+                }
+                for(int add2=-1;add2<=1;add2++){
+                    if(c2+add2<0 || c2+add2>=cols){ // continue if Robot leaves the grid 
+                        continue;
+                    }
+                    max=Math.max(max,cherryPickupUtil(grid,rows,cols,r+1,c1+add1,c2+add2));
+                }
+            }
+            memo[r][c1][c2]=cherries_here+max;
+        }
+        return memo[r][c1][c2];
+    }
+    
+    public int cherryPickup(int[][] grid) {
+        int rows=grid.length, cols=grid[0].length;
+        
+        memo=new int[rows][cols][cols];
+        for(int i=0;i<rows;i++){
+            memo[i]=new int[cols][cols];
+            for(int j=0;j<cols;j++){
+                memo[i][j]=new int[cols];
+                for(int k=0;k<cols;k++){
+                    memo[i][j][k]=-1;
+                }
+            }
+        }
+        
+        return cherryPickupUtil(grid,rows,cols,0,0,cols-1);
+    }
+}
