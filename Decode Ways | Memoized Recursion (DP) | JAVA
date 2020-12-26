@@ -1,0 +1,51 @@
+// Link: https://leetcode.com/explore/challenge/card/december-leetcoding-challenge/572/week-4-december-22nd-december-28th/3581/discuss/987043/Decode-Ways-or-Memoized-Recursion-(DP)-or-JAVA
+
+class Solution {
+    int memo[]; // Memo for storing computed results
+    
+    // Utility to count ways of decoding the string 's' from 'st' to 'end'
+    public int countWays(String s,int st,int end){
+        if(st>end){ // No possibility
+            return 0;
+        }
+        
+        if(memo[st]!=-1){   // Re-use the already existing result
+            return memo[st];
+        }
+        
+        if(s.charAt(st)=='0'){  // No possibility
+            return 0;
+        }
+        
+        if(st==end){
+            return 1;
+        }
+        
+        // First option is to take the single character at 'st' and recurse for the rest
+        // Second option is to take 2 characters (at 'st' and 'st'+1) and recurse for the rest
+        
+        // For second option:
+        //      -> This is possible only if the string formed from 2 characters has value <=26
+        //      -> Also, if we are at 'end'-1, no need to recurse further => just return 1
+        int opt1=countWays(s,st+1,end);
+        int opt2=0;
+        if(Integer.parseInt(s.substring(st,st+2))<=26){
+            if(st==end-1){
+                opt2=1;
+            } else{
+                opt2=countWays(s,st+2,end);
+            }
+        }
+        memo[st]=opt1+opt2;
+        return memo[st];
+    }
+    
+    public int numDecodings(String s) { 
+        int len=s.length();
+        
+        memo=new int[len];
+        Arrays.fill(memo,-1);
+        
+        return countWays(s,0,len-1);
+    }
+}
