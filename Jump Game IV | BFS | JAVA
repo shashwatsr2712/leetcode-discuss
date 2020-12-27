@@ -1,0 +1,94 @@
+// Link: https://leetcode.com/explore/challenge/card/december-leetcoding-challenge/572/week-4-december-22nd-december-28th/3582/discuss/988954/Jump-Game-IV-or-BFS-or-JAVA
+
+
+* A graph of n nodes is considered, where n is the length of the array, and Breadth First Search is performed on it.
+  The distance is tracked starting from the source, and the final distance obtained on reaching the destination is returned.
+* Neighbors of any node/index ind include, along with valid previous and next indices, indices with same value as that at ind.
+* Instead of explicitly creating a Graph data structure, a HashMap (built in linear time), mapping values to the corresponding list of indices is constructed.
+* Another optimization is done using a HashSet to store the values which have already been seen.
+  When we see a value x and push its neighbors with value x into the queue, the second time we encounter the same value, there is no need to traverse the neighbors (containing x) of it.
+
+
+// Class used in BFS to track depth/level
+class TraversalInfo{
+    int level;
+    int index;
+    
+    TraversalInfo(int l,int ind){
+        level=l;
+        index=ind;
+    }
+}
+
+class Solution {
+    public int minJumps(int[] arr) {
+        int len=arr.length;
+        if(len==1){
+            return 0;
+        }
+        
+        // Map from value to indices where that value is present
+        Map<Integer,Set<Integer>> indices_for_vals=new HashMap<Integer,Set<Integer>>();
+        for(int i=0;i<len;i++){
+            if(!indices_for_vals.containsKey(arr[i])){
+                Set<Integer> temp=new HashSet<Integer>();
+                temp.add(i);
+                indices_for_vals.put(arr[i],temp);
+            } else{
+                indices_for_vals.get(arr[i]).add(i);
+            }
+        }
+        
+        // Origin and destination
+        int src=0, target=len-1;
+        
+        
+        // SOLVE USING BFS
+        
+        // Keep track of visited nodes
+        boolean visited[]=new boolean[len];
+        Arrays.fill(visited,false);
+        
+        Queue<TraversalInfo> traversed=new LinkedList<TraversalInfo>();
+        traversed.add(new TraversalInfo(0,src));
+        visited[src]=true;
+        
+        // Store values which have been already seen
+        // Logic: If a value 'x' has been seen and all its neighbors (with value 'x') added to queue,
+        //      when it appears again, there is no need to check its neighbors (indices with same value)
+        Set<Integer> val_groups=new HashSet<Integer>();
+        
+        int curr_level=-1;
+        while(traversed.size()>0){
+            TraversalInfo rem=traversed.remove();
+            int level_here=rem.level;
+            int index_here=rem.index;
+            if(curr_level!=level_here){ // Entering a new level
+                curr_level=level_here;
+            }
+            if(index_here==target){ // Reached destination
+                return curr_level;
+            }
+            
+            Set<Integer> temp=indices_for_vals.get(arr[index_here]);    // Get neighbors (indices with same value)
+            if(index_here>0 && !visited[index_here-1]){ // Go left if possible
+                traversed.add(new TraversalInfo(curr_level+1,index_here-1));
+                visited[index_here-1]=true;
+            }
+            if(index_here<target && !visited[index_here+1]){    // Go right if possible
+                traversed.add(new TraversalInfo(curr_level+1,index_here+1));
+                visited[index_here+1]=true;
+            }
+            if(!val_groups.contains(arr[index_here])){
+                for(Integer x:temp){    // Visit neighbors (indices with same value)
+                    if(!visited[x]){
+                        traversed.add(new TraversalInfo(curr_level+1,x));
+                        visited[x]=true;
+                    }
+                }
+                val_groups.add(arr[index_here]);
+            }
+        }
+        return curr_level;
+    }
+}
