@@ -1,0 +1,20 @@
+// Link: https://leetcode.com/explore/challenge/card/january-leetcoding-challenge-2021/579/week-1-january-1st-january-7th/3594/discuss/1004600/Kth-Missing-Positive-Number-or-JAVA
+
+class Solution {
+    public int findKthPositive(int[] arr, int k) {
+        int prev_val=0;
+        
+        for(int current_val:arr){
+            int missing_range=current_val-prev_val-1;
+            
+            if(missing_range>=k){
+                return prev_val+k;
+            }
+            
+            k-=missing_range;
+            prev_val=current_val;
+        }
+        
+        return prev_val+k;
+    }
+}
