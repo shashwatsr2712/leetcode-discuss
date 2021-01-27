@@ -1,0 +1,50 @@
+// Link: https://leetcode.com/explore/challenge/card/january-leetcoding-challenge-2021/582/week-4-january-22nd-january-28th/3617/discuss/1037111/Path-With-Minimum-Effort-or-Dijkstra-PriorityQueue-or-C++
+
+// This problem can be solved using Dijkstra's shortest path, because
+// The distance dunction here (involving max difference) is monotonically increasing like addition
+// Time complexity using min_heap -> O(E lg V) => O(mn lg mn)
+
+class Solution {
+public:
+    struct MyComp{
+        bool operator()(vector<int> const& a,vector<int> const& b){
+            assert(a.size()==3);
+            assert(b.size()==3);
+            
+            return a[2]>b[2];
+        }
+    };
+    
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        int rows=heights.size(), cols=heights[0].size();
+        
+        // Priority Queue consists of the node position and the distance value
+        priority_queue<vector<int>,vector<vector<int>>,MyComp> min_heap;
+        
+        // Distance value for each node (0 for source; INF for others)
+        vector<vector<int>> dist(rows,vector<int>(cols,INT_MAX));
+        dist[0][0]=0;
+        
+        min_heap.push({0,0,0}); // The source node
+        int add_vals[]={-1,0,1,0,-1};
+        while(!min_heap.empty()){
+            vector<int> min_dist_node=min_heap.top();
+            min_heap.pop();
+            int r=min_dist_node[0], c=min_dist_node[1];
+            if(r==rows-1 && c==cols-1){ // Reached destination?
+                return min_dist_node[2];
+            }
+            for(int i=0;i<4;i++){
+                int new_r=r+add_vals[i], new_c=c+add_vals[i+1];
+                if(new_r>=0 && new_r<rows && new_c>=0 && new_c<cols && 
+                   dist[new_r][new_c]>max(min_dist_node[2],abs(heights[new_r][new_c]-heights[r][c]))){
+                    
+                    dist[new_r][new_c]=max(min_dist_node[2],abs(heights[new_r][new_c]-heights[r][c]));
+                    min_heap.push({new_r,new_c,dist[new_r][new_c]});
+                    
+                }
+            }
+        }
+        return 0;
+    }
+};
