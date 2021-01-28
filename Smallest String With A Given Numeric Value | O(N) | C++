@@ -1,0 +1,29 @@
+// Link: https://leetcode.com/explore/challenge/card/january-leetcoding-challenge-2021/582/week-4-january-22nd-january-28th/3619/discuss/1038818/Smallest-String-With-A-Given-Numeric-Value-or-O(N)-or-C++
+
+/*
+We start from index 0 moving from left to right, trying to keep minimum values at each index
+
+Assume requirement to be 'k', and length of string as 'n'
+For index 'i', if we fill it with value 'x' (our goal is to find out 'x'),
+    we have 'n-i-1' places remaining which can be filled upto a value of 26*(n-i-1)`    => Availability
+    but the value required from those places is 'k-x'   => Requirement
+    As availability>=requirement,
+        k-x<=26*(n-i-1) => x>=k-26*(n-i-1)
+        So, x=max(k-26*(n-i-1),1) [sanity check, as minimum value has to be 1]
+*/
+
+class Solution {
+public:
+    string getSmallestString(int n, int k) {
+        string res="";
+        int reqd=k;
+        
+        for(auto i=0;i<n;i++){
+            int suitable_value=max(reqd-26*(n-i-1),1);
+            char ch=96+suitable_value;
+            res+=ch;
+            reqd-=suitable_value;
+        }
+        return res;
+    }
+};
