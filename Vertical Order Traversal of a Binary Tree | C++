@@ -1,0 +1,58 @@
+// Link: https://leetcode.com/explore/challenge/card/january-leetcoding-challenge-2021/583/week-5-january-29th-january-31st/3621/discuss/1040460/Vertical-Order-Traversal-of-a-Binary-Tree-or-C++
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+
+class Solution {
+public:
+    // Custom class for position of each node in cartesian plane along with its value
+    struct ValPos{
+        int x,y;
+        int val;
+        
+        ValPos(int val1,int x1,int y1): val(val1),x(x1),y(y1) {}
+        
+        bool operator<(const ValPos& obj){
+            return x==obj.x ? ((y==obj.y) ? val<obj.val : y>obj.y) : x<obj.x;
+        }
+    };
+    
+    void preOrder(int x,int y,TreeNode* root,vector<ValPos>& lst){
+        if(root==NULL){
+            return;
+        }
+        lst.push_back(ValPos(root->val,x,y));
+        preOrder(x-1,y-1,root->left,lst);
+        preOrder(x+1,y-1,root->right,lst);
+    }
+    
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        vector<vector<int>> res;    // For result
+        
+        vector<ValPos> lst;
+        preOrder(0,0,root,lst); // Form a vector of all nodes in preorder and store that in 'lst'
+        sort(lst.begin(),lst.end());    // Sort the vector according to given criteria in overloaded <
+        
+        // Construct result from 'lst'
+        int prev=INT_MAX, loc=-1;
+        for(int i=0;i<lst.size();i++){
+            if(lst[i].x!=prev){
+                res.push_back(vector<int>());
+                loc+=1;
+            }
+            res[loc].push_back(lst[i].val);
+            prev=lst[i].x;
+        }
+        return res;
+    }
+};
