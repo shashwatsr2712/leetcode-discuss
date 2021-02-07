@@ -1,0 +1,50 @@
+// Link: https://leetcode.com/explore/challenge/card/february-leetcoding-challenge-2021/584/week-1-february-1st-february-7th/3631/discuss/1054628/Shortest-Distance-to-a-Character-or-C++
+
+class Solution {
+public:
+    vector<int> shortestToChar(string s, char c) {
+        int len=s.length();
+        vector<int> res(len,0);
+        
+        int prev_found=0;   // Index nearest to the current location on the left side where 'c' is found 
+        for(int i=0;i<len;){
+            char ch=s[i];
+            
+            if(ch==c){
+                prev_found=i;
+                i+=1;
+                continue;
+            }
+            
+            // Check if 'c' exists to the right of current location and find that nearest index ('j')
+            bool found=false;
+            int j;
+            for(j=i+1;j<len;j++){
+                if(s[j]==c){
+                    found=true;
+                    break;
+                }
+            }
+            
+            // If found, for this entire span from current location to 'j', calculate results, and restart from j+1
+            if(found){
+                for(int i1=i;i1<j;i1++){
+                    if(i==0){
+                        res[i1]=j-i1;
+                    } else{
+                        res[i1]=min(i1-prev_found,j-i1);
+                    }
+                }
+                prev_found=j;
+                i=j+1;
+            } else{ // Otherwise, just compute results from current location till the end using 'prev_found' 
+                for(int i1=i;i1<len;i1++){
+                    res[i1]=i1-prev_found;
+                }
+                return res;
+            }
+        }
+        
+        return res;
+    }
+};
