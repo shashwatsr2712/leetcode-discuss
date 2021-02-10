@@ -1,0 +1,53 @@
+// Link: https://leetcode.com/explore/challenge/card/february-leetcoding-challenge-2021/585/week-2-february-8th-february-14th/3634/discuss/1058709/Convert-BST-to-Greater-Tree-or-Recursive-O(n)-or-C++
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    // Traverse in-order and store in a vector
+    void inOrder(vector<int>& res,TreeNode* root){
+        if(root==NULL){
+            return;
+        }
+        
+        inOrder(res,root->left);
+        res.push_back(root->val);
+        inOrder(res,root->right);
+    }
+    
+    // This essentially does an inorder_traversal, while modifying the value of nodes along the way (using the passed vector)
+    void convertUtil(TreeNode* root,vector<int>& inorder_traversal,int& index){
+        if(root==NULL){
+            return;
+        }
+        
+        convertUtil(root->left,inorder_traversal,index);
+        root->val=inorder_traversal[index];
+        index+=1;
+        convertUtil(root->right,inorder_traversal,index);
+    }
+    
+    TreeNode* convertBST(TreeNode* root) {
+        vector<int> inorder_traversal;
+        inOrder(inorder_traversal,root);    // Get in-order traversal (note that this is sorted)
+        
+        // Convert the inorder traversal vector into a suffix sum vector 
+        for(int i=inorder_traversal.size()-2;i>=0;i--){
+            inorder_traversal[i]+=inorder_traversal[i+1];
+        }
+        
+        int index=0;
+        // Use the modified inorder traversal vector to change value at each node
+        convertUtil(root,inorder_traversal,index);
+        return root;
+    }
+};
