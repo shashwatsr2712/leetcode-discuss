@@ -1,0 +1,47 @@
+// Link: https://leetcode.com/explore/challenge/card/february-leetcoding-challenge-2021/585/week-2-february-8th-february-14th/3638/discuss/1064883/Shortest-Path-in-Binary-Matrix-or-BFS-or-C++
+
+struct BFSNode{
+    int row,col;
+    int level;
+    
+    BFSNode(int _row,int _col,int _level): row(_row),col(_col),level(_level) {}
+};
+
+class Solution {
+public:
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+        int rows=grid.size(), cols=grid[0].size();
+        vector<vector<bool>> visited(rows,vector<bool>(cols,false));
+        
+        if(grid[0][0]==1 || grid[rows-1][cols-1]==1){
+            return -1;
+        }
+        
+        queue<BFSNode> bfs_traversal;
+        bfs_traversal.push(BFSNode(0,0,1));
+        visited[0][0]=true;
+        int curr_level=0;
+        
+        int add_r[]={-1,-1,0,1,1,1,0,-1}, add_c[]={0,1,1,1,0,-1,-1,-1};
+        while(!bfs_traversal.empty()){
+            BFSNode removed_node=bfs_traversal.front();
+            bfs_traversal.pop();
+            int row=removed_node.row, col=removed_node.col, level=removed_node.level;
+            if(curr_level!=level){
+                curr_level+=1;
+            }
+            if(row==rows-1 && col==cols-1){
+                return curr_level;
+            }
+            for(int i=0;i<8;i++){
+                int new_r=row+add_r[i], new_c=col+add_c[i];
+                if(new_r>=0 && new_r<rows && new_c>=0 && new_c<cols && grid[new_r][new_c]==0 && !visited[new_r][new_c]){
+                    bfs_traversal.push(BFSNode(new_r,new_c,level+1));
+                    visited[new_r][new_c]=true;
+                }
+            }
+        }
+        
+        return -1;
+    }
+};
