@@ -1,0 +1,53 @@
+// Link: https://leetcode.com/explore/challenge/card/february-leetcoding-challenge-2021/585/week-2-february-8th-february-14th/3639/discuss/1065240/Is-Graph-Bipartite-or-BFS-(Coloring)-or-C++
+
+class Solution {
+public:
+    bool isBipartite(vector<vector<int>>& graph) {
+        int V=graph.size();
+        
+        vector<int> vertices_colors(V,0);  // 0 for uncolored (unvisited), 1 for Red, 2 for Blue
+        
+        queue<int> bfs_traversed;
+            
+        bool done=false;
+        int start=0;    // Starting vertex for BFS
+        
+        while(!done){
+            /* BFS procedure begins */
+            vertices_colors[start]=1;
+            bfs_traversed.push(start);
+
+            while(!bfs_traversed.empty()){
+                int removed_node=bfs_traversed.front();
+                bfs_traversed.pop();
+                int removed_node_color=vertices_colors[removed_node];
+                int color_for_neighbors=removed_node_color==1 ? 2 : 1;
+
+                for(int i=0;i<graph[removed_node].size();i++){
+                    int neighbor_node=graph[removed_node][i];
+                    if(vertices_colors[neighbor_node]==0){
+                        vertices_colors[neighbor_node]=color_for_neighbors;
+                        bfs_traversed.push(neighbor_node);
+                    } else if(vertices_colors[neighbor_node]==removed_node_color){
+                        return false;   // Two same colored nodes can't be neighbors
+                    } else{}
+                }
+            }
+            /* BFS procedure ends */
+            
+            // Check if all the vertices have been visited, as it might not be the case for disconnected graphs
+            done=true;
+            for(int i=0;i<V;i++){
+                if(vertices_colors[i]!=0){
+                    continue;
+                }
+                // An unvisited vertex found => Start BFS from this vertex in next iteration
+                start=i;
+                done=false;
+                break;
+            }
+        }
+            
+        return true;
+    }
+};
