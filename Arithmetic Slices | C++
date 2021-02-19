@@ -1,0 +1,26 @@
+// Link: https://leetcode.com/explore/challenge/card/february-leetcoding-challenge-2021/586/week-3-february-15th-february-21st/3644/discuss/1072278/Arithmetic-Slices-or-C++
+
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int len=A.size();
+        int res=0;
+        
+        // The idea is to find the largest possible arithmetic sequence starting from 'st' by moving the 'end' pointer
+        // If the sequence length is 'n', then the number of possible sequences within it are n*(n+1)/2
+        // The next iteration begins from st=end
+        int st=0;
+        while(st<len-2){
+            int end=st+1;
+            int diff=A[end]-A[st];  // The required difference to be maintained in this sequence
+            while(end+1<len && A[end+1]-A[end]==diff){
+                end+=1;
+            }
+            
+            int size=end-st+1;
+            res+=((size-2)*(size-1))/2;
+            st=end; // For the next iteration
+        }
+        return res;
+    }
+};
