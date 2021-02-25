@@ -1,0 +1,27 @@
+// Link: https://leetcode.com/explore/challenge/card/february-leetcoding-challenge-2021/587/week-4-february-22nd-february-28th/3652/discuss/1082075/Shortest-Unsorted-Continuous-Subarray-or-C++
+
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        // Maintain a sorted copy of nums
+        // Keep a starting and end pointer; compare elements in both the lists at these positions
+        // If they match, shift the pointers (start one forward, end one backward); else return the gap
+        vector<int> nums_copy(nums);
+        sort(nums_copy.begin(),nums_copy.end());
+        
+        int st=0, end=nums.size()-1;
+        while(st<end){
+            if(nums[st]!=nums_copy[st] && nums[end]!=nums_copy[end]){
+                break;
+            }
+            
+            if(nums[st]==nums_copy[st]){
+                st+=1;
+            }
+            if(nums[end]==nums_copy[end]){
+                end-=1;
+            }
+        }
+        return (st==end) ? 0 : end-st+1;
+    }
+};
