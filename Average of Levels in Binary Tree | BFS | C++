@@ -1,0 +1,54 @@
+// Link: https://leetcode.com/explore/challenge/card/march-leetcoding-challenge-2021/588/week-1-march-1st-march-7th/3661/discuss/1094737/Average-of-Levels-in-Binary-Tree-or-BFS-or-C++
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    struct NodeInfo{
+        int level;
+        TreeNode* node;
+        NodeInfo(int _level,TreeNode* _node):level(_level),node(_node){}
+    };
+    
+    vector<double> averageOfLevels(TreeNode* root) {
+        queue<NodeInfo> bfs_traversal;
+        bfs_traversal.push(NodeInfo(0,root));
+        
+        int curr_level=-1;
+        double curr_sum=0, curr_count=0;
+        vector<double> res;
+        while(!bfs_traversal.empty()){
+            NodeInfo removed=bfs_traversal.front();
+            bfs_traversal.pop();
+            
+            if(removed.level!=curr_level){
+                if(curr_level!=-1){
+                    res.push_back(curr_sum/curr_count);
+                    curr_sum=0;
+                    curr_count=0;
+                }
+                curr_level=removed.level;
+            }
+            
+            curr_sum+=removed.node->val;
+            curr_count+=1;
+            if(removed.node->left!=NULL){
+                bfs_traversal.push(NodeInfo(removed.level+1,removed.node->left));
+            }
+            if(removed.node->right!=NULL){
+                bfs_traversal.push(NodeInfo(removed.level+1,removed.node->right));
+            }
+        }
+        res.push_back(curr_sum/curr_count);
+        return res;
+    }
+};
