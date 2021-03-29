@@ -1,0 +1,97 @@
+// Link: https://leetcode.com/explore/challenge/card/march-leetcoding-challenge-2021/592/week-5-march-29th-march-31st/3689/discuss/1132814/Flip-Binary-Tree-To-Match-Preorder-Traversal-or-DFS
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int ind_voyage=0;   // to keep track of index in 'voyage' (ever increasing)
+    bool possible=true; // to detect as soon as it is known that flipping is impossible
+        
+    void preOrder(TreeNode* root,vector<int>& voyage,vector<int>& res){
+        // base case
+        if(root==NULL || !possible){
+            return;
+        }
+        // the values at root have to match (flipping only affects the children); if not, it is not possible
+        if(voyage[ind_voyage]!=root->val){
+            possible=false;
+            res.clear();res.push_back(-1);
+            return;
+        }
+        
+        if(root->left==NULL && root->right==NULL){  // no children
+            // nothing to do
+            return;
+        } else if(root->right==NULL){   // only left child
+            // the next element of 'voyage' has to match this only child
+            if(voyage[ind_voyage+1]!=root->left->val){
+                possible=false;
+                res.clear();res.push_back(-1);
+                return;
+            }
+            // recurse for the left subtree
+            ind_voyage+=1;
+            preOrder(root->left,voyage,res);
+        } else if(root->left==NULL){    // only right child
+            // the next element of 'voyage' has to match this only child
+            if(voyage[ind_voyage+1]!=root->right->val){
+                possible=false;
+                res.clear();res.push_back(-1);
+                return;
+            }
+            // recurse for the right subtree
+            ind_voyage+=1;
+            preOrder(root->right,voyage,res);
+        } else{ // both children
+            // if the next element of 'voyage' matches with the left child OR
+            //  the next to next element of 'voyage' matches the right child
+            // there is no issue and recursion can be continued
+            if(voyage[ind_voyage+1]==root->left->val || voyage[ind_voyage+2]==root->right->val){
+                // NOTHING TO DO
+            }
+            // if the next element of 'voyage' matches with the right child or
+            //  the next to next element of 'voyage' matches the left child
+            // flip the children before continuing recursion
+            else if(voyage[ind_voyage+1]==root->right->val || voyage[ind_voyage+2]==root->left->val){
+                res.push_back(root->val);   // record this flipping in the result
+                TreeNode* temp=root->left;
+                root->left=root->right;
+                root->right=temp;
+            }
+            // in any other case, it is not possible
+            else{
+                possible=false;
+                res.clear();res.push_back(-1);
+                return;
+            }
+            // recurse for the left subtree
+            ind_voyage+=1;
+            preOrder(root->left,voyage,res);
+            if(!possible){
+                return;
+            }
+            // recurse for the right subtree if possible
+            ind_voyage+=1;
+            preOrder(root->right,voyage,res);
+        }
+    }
+    
+    vector<int> flipMatchVoyage(TreeNode* root, vector<int>& voyage) {
+        vector<int> res;
+        
+        // reset global vars
+        ind_voyage=0;possible=true;
+        
+        preOrder(root,voyage,res);
+        return res;
+    }
+};
