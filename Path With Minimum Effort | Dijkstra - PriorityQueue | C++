@@ -1,7 +1,7 @@
 // Link: https://leetcode.com/explore/challenge/card/january-leetcoding-challenge-2021/582/week-4-january-22nd-january-28th/3617/discuss/1037111/Path-With-Minimum-Effort-or-Dijkstra-PriorityQueue-or-C++
 
 // This problem can be solved using Dijkstra's shortest path, because
-// The distance dunction here (involving max difference) is monotonically increasing like addition
+// The distance function here (involving max difference) is monotonically increasing like addition
 // Time complexity using min_heap -> O(E lg V) => O(mn lg mn)
 
 class Solution {
