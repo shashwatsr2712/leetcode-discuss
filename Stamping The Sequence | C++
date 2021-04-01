@@ -1,0 +1,58 @@
+// Link: https://leetcode.com/explore/challenge/card/march-leetcoding-challenge-2021/592/week-5-march-29th-march-31st/3691/discuss/1136880/Stamping-The-Sequence-or-C++
+
+class Solution {
+public:
+    // Check if stamp has a match in target (with ? as wildcard); modify target and return the index 
+    int checkMatchingAndReplace(string& target,string stamp){
+        int len_stamp=stamp.size();
+        for(int i=0;i<target.length()-len_stamp+1;i++){
+            // check if the string starting at this index matches with 'stamp'
+            bool all_wildcard=true;  // check if there is at least one non-wildcard match (all wildcard matches => no match)
+            bool match_found=true;  // check if match is found
+            for(int j=0;j<len_stamp;j++){
+                if(stamp[j]!=target[i+j] && target[i+j]!='?'){
+                    match_found=false;
+                    break;
+                }
+                if(target[i+j]!='?'){
+                    all_wildcard=false;
+                }
+            }
+            if(match_found && !all_wildcard){
+                // successfully found the index => modify target string 
+                for(int j=0;j<len_stamp;j++){
+                    target[i+j]='?';
+                }
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    // Check if the entire string is of wildcards (composed of '?')
+    bool allEmpty(string x){
+        for(int i=0;i<x.length();i++){
+            if(x[i]!='?'){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    vector<int> movesToStamp(string stamp, string target) {
+        vector<int> res;
+        
+        // do the reverse task of converting 'target' to '?...?' by finding matches of 'stamp' in 'target'
+        while(!allEmpty(target)){   // continue till the entire 'target' string is of ?'s
+            int index;
+            index=checkMatchingAndReplace(target,stamp);    // check match in 'target' and replace those positions with '?'
+            if(index==-1){
+                return {};
+            }
+            res.push_back(index);
+        }
+        
+        reverse(res.begin(),res.end());
+        return res;
+    }
+};
