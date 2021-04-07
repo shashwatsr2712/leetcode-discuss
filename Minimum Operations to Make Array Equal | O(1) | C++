@@ -1,0 +1,26 @@
+// Link: https://leetcode.com/explore/challenge/card/april-leetcoding-challenge-2021/593/week-1-april-1st-april-7th/3698/discuss/1146599/Minimum-Operations-to-Make-Array-Equal-or-O(1)-or-C++
+
+class Solution {
+public:
+    int minOperations(int n) {
+        /*
+            what we have to do here is make all the values equal to 'n' (which is the average of first and last value)
+            for that, we first pick index 0 and 'n-1', and do operations till value at 0 becomes n
+                similarly, we do the operations for all indices upto the middle index
+            for instance, for [1,3,5,7],
+                for index 0 -> [1,3,5,7] => [2,3,5,6] => [3,3,5,5] => [4,3,5,4]
+                for index 1 -> [4,3,5,4] => [4,4,4,4]
+                total operations = 3+1 = 4
+            for instance, for [1,3,5,7,9]
+                for index 0 -> [1,3,5,7,9] => [2,3,5,7,8] => [3,3,5,7,7] => [4,3,5,7,6] => [5,3,5,7,5]
+                for index 1 -> [5,3,5,7,5] => [5,4,5,6,5] => [5,5,5,5,5]
+                total operations = 4+2=6
+            
+            Overall formula:
+            for even 'n' (say, n=12), we should have 11+9+7+...+1 => Sum = 6*(1+11)/2
+            for odd 'n' (say, n=11), we should have 10+8+6+...+2 => Sum = 5*(2+10)/2
+        */
+        
+        return ((n&1)==0) ? (1+(n-1))*(n/2)/2 : (2+(n-1))*(n/2)/2;
+    }
+};
