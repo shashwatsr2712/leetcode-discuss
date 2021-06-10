@@ -1,0 +1,77 @@
+// Link: https://leetcode.com/explore/challenge/card/june-leetcoding-challenge-2021/603/week-1-june-1st-june-7th/3769/discuss/1263119/Longest-Consecutive-Sequence-or-Disjoint-Sets-or-C++
+
+class DisjointSet{
+    private:
+        int n;
+        unordered_map<int,int> parent;
+        unordered_map<int,int> rank;
+        unordered_map<int,int> count;
+    public:
+        DisjointSet(const vector<int>& nums){
+            n=nums.size();
+            for(auto element:nums){
+                parent[element]=element;
+                rank[element]=1;
+                count[element]=1;
+            }
+        }
+        unordered_set<int> getCounts(){
+            unordered_set<int> count_set;
+            for(auto t:count){
+                count_set.insert(t.second);
+            }
+            return count_set;
+        }
+        int find(int x);
+        void union_ds(int x,int y);
+};
+
+int DisjointSet::find(int x){
+    if(parent[x]!=x){
+        parent[x]=find(parent[x]);
+    }
+    return parent[x];
+}
+
+void DisjointSet::union_ds(int x,int y){
+    int p_x=find(x),p_y=find(y);
+    if(p_x==p_y){
+        return;
+    }
+    if(rank[p_x]<rank[p_y]){
+        parent[p_x]=p_y;
+        count[p_y]+=count[p_x];
+    } else{
+        parent[p_y]=p_x;
+        count[p_x]+=count[p_y];
+        if(rank[p_x]==rank[p_y]){
+            rank[p_x]+=1;
+        }
+    }
+}
+
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> temp_set(nums.begin(),nums.end());
+        vector<int> nums_distinct(temp_set.begin(),temp_set.end());
+        DisjointSet consecutive_clubbed(nums_distinct);
+        
+        for(auto n:nums_distinct){
+            if(temp_set.find(n-1)!=temp_set.end()){
+                consecutive_clubbed.union_ds(n,n-1);
+            }
+            if(temp_set.find(n+1)!=temp_set.end()){
+                consecutive_clubbed.union_ds(n,n+1);
+            }
+        }
+        
+        unordered_set<int> counts=consecutive_clubbed.getCounts();
+        int res=0;
+        for(auto t:counts){
+            res=max(res,t);
+        }
+        return res;
+    }
+};
