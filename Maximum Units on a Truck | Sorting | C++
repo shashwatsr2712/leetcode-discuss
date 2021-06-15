@@ -1,0 +1,29 @@
+// Link: https://leetcode.com/explore/challenge/card/june-leetcoding-challenge-2021/604/week-2-june-8th-june-14th/3778/discuss/1273525/Maximum-Units-on-a-Truck-or-Sorting-or-C++
+
+class Solution {
+public:
+    // Sort the vector of vectors according to the number of units for each box type
+    //  i.e., box type with more number of units comes first
+    // For box types with same number of units, the type with more number of boxes comes first
+    struct MyComparator{
+        inline bool operator()(const vector<int>& v1,const vector<int>& v2){
+            return (v1[1]==v2[1]) ? v1[0]>v2[0] : v1[1]>v2[1];
+        } 
+    };
+    
+    int maximumUnits(vector<vector<int>>& boxTypes, int truckSize) {
+        sort(boxTypes.begin(),boxTypes.end(),MyComparator());
+        
+        int i=0, count_boxes=0, count_units=0;
+        while(i<boxTypes.size()){
+            if(count_boxes+boxTypes[i][0]>truckSize){
+                count_units+=boxTypes[i][1]*(truckSize-count_boxes);
+                break;
+            }
+            count_boxes+=boxTypes[i][0];
+            count_units+=boxTypes[i][1]*boxTypes[i][0];
+            i+=1;
+        }
+        return count_units;
+    }
+};
