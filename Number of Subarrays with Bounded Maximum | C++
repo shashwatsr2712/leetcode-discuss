@@ -1,0 +1,26 @@
+// Link: https://leetcode.com/explore/challenge/card/june-leetcoding-challenge-2021/605/week-3-june-15th-june-21st/3782/discuss/1278640/Number-of-Subarrays-with-Bounded-Maximum-or-C++
+
+class Solution {
+public:
+    int numSubarrayBoundedMax(vector<int>& nums, int left, int right) {
+        int count=0;
+        
+        for(auto i=0;i<nums.size();i++){    // consider the subarrays starting at 'i'
+            int max_so_far=0;
+            for(auto j=i;j<nums.size();j++){
+                // to get the max for the subarray 'i...j', compare 'max_so_far' with the new element 'nums[j]'
+                if(nums[j]>max_so_far){
+                    max_so_far=nums[j];
+                }
+                
+                if(max_so_far>=left && max_so_far<=right){
+                    count+=1;
+                } else if(max_so_far>right){
+                    // for all farther 'j' va;ues, the max will only be greater than 'right', hence break this loop
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+};
