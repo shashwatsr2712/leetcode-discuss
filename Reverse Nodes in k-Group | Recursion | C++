@@ -1,0 +1,45 @@
+// Link: https://leetcode.com/explore/challenge/card/july-leetcoding-challenge-2021/610/week-3-july-15th-july-21st/3818/discuss/1345973/Reverse-Nodes-in-k-Group-or-Recursion-or-C++
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    // using recursion:
+    //  - if the length of the list is less than k, nothing is to be changed
+    //  - else, reverse the first k nodes, and recurse for the rest
+    //      - attach recursion's result to the tail of the reversed  first group
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        unsigned int len=0; // number of nodes in LL
+        ListNode* temp_head=head;
+        while(temp_head!=nullptr){
+            len+=1;
+            temp_head=temp_head->next;
+        }
+        
+        if(len<k){  // base case
+            return head;
+        }
+        ListNode* last_in_group=head;   // this will point to the last node in this group after reversing it
+        ListNode* prev=NULL, *curr=head, *next=curr;
+        // reverse k nodes
+        int count=0;
+        while(count<k){
+            next=curr->next;
+            curr->next=prev;
+            prev=curr; curr=next;
+            count+=1;
+        }
+        // now 'prev' points to the new head, and 'curr' points to the node just after this group
+        ListNode* new_head=prev;
+        last_in_group->next=reverseKGroup(curr,k);  // recurse
+        return new_head;
+    }
+};
